@@ -7,8 +7,9 @@
 ';?>
   public function executeShow(sfWebRequest $request)
   {
-    $<?php echo $this->getSingularName() ?> = Doctrine::getTable('<?php echo $this->getModelClass() ?>')->find(<?php echo $this->getRetrieveByPkParamsForAction(49) ?>);
-    $this->forward404Unless($this-><?php echo $this->getSingularName() ?>);
-    
-    return $this->renderText(GeoJSON::encode($<?php echo $this->getSingularName() ?>, '<?php echo $this->getModelClass() ?>'), true);
+    $this->forward404Unless($<?php echo $this->getSingularName() ?> = Doctrine::getTable('<?php echo $this->getModelClass() ?>')->searchByProtocol($request));
+
+    $feature = GeoJSON::loadFrom($<?php echo $this->getSingularName() ?>, new GeoJSON_Doctrine_Adapter());
+
+    return $this->renderText(GeoJSON::dump($feature));
   }

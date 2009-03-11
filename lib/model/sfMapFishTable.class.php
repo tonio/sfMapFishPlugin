@@ -15,7 +15,7 @@ class sfMapFishTable extends Doctrine_Table
   public function searchByProtocol(sfWebRequest $request)
   {
     $query = $this->createMfQuery()->select('*');
-    
+
     if ($request->hasParameter('lon') && $request->hasParameter('lat'))
     {
       $query->hasPoint(
@@ -33,13 +33,27 @@ class sfMapFishTable extends Doctrine_Table
         $request->getParameter('epsg', null)
       );
     }
-    
+
+    if ($request->hasParameter('id'))
+    {
+      $query->addWhere($this->getIdentifier().'=?', $request->getParameter('id'));
+    }
+
     if ($request->hasParameter('maxfeatures'))
     {
       $query->limit((int) $request->getParameter('maxfeatures'));
     }
+
+    $result = $query->execute();
     
-    return $query->execute();
+    if ($request->hasParameter('id'))
+    {
+      return $result->getFirst();
+    }
+    else
+    {
+      return $result;
+    }
   }
   
   /**
@@ -56,7 +70,8 @@ class sfMapFishTable extends Doctrine_Table
     if ( ! empty($alias)) {
       $alias = ' ' . trim($alias);
     }
-    return mfQuery::create($this->_conn)->from($this->getComponentName() . $alias);
+    return mfQuery::create($this->getGeometryColumnName())
+      ->from($this->getComponentName() . $alias);
   }
 
   public function getGeometryColumn()

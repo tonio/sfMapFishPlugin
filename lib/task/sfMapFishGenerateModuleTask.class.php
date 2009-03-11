@@ -29,15 +29,7 @@ class sfMapFishGenerateModuleTask extends sfDoctrineBaseTask
     ));
 
     $this->addOptions(array(
-      new sfCommandOption('theme', null, sfCommandOption::PARAMETER_REQUIRED, 'The theme name', 'default'),
-      new sfCommandOption('generate-in-cache', null, sfCommandOption::PARAMETER_NONE, 'Generate the module in cache'),
-      new sfCommandOption('non-verbose-templates', null, sfCommandOption::PARAMETER_NONE, 'Generate non verbose templates'),
-      new sfCommandOption('with-show', null, sfCommandOption::PARAMETER_NONE, 'Generate a show method'),
-      new sfCommandOption('singular', null, sfCommandOption::PARAMETER_REQUIRED, 'The singular name', null),
-      new sfCommandOption('plural', null, sfCommandOption::PARAMETER_REQUIRED, 'The plural name', null),
-      new sfCommandOption('route-prefix', null, sfCommandOption::PARAMETER_REQUIRED, 'The route prefix', null),
-      new sfCommandOption('with-doctrine-route', null, sfCommandOption::PARAMETER_NONE, 'Whether you will use a Doctrine route'),
-      new sfCommandOption('env', null, sfCommandOption::PARAMETER_REQUIRED, 'The environment', 'dev'),
+      new sfCommandOption('generate-route', null, sfCommandOption::PARAMETER_NONE, 'Whether you will update your routing.yml file')
     ));
 
     $this->aliases = array('mapfish-generate-crud', 'mapfish:generate-crud');
@@ -53,17 +45,6 @@ The [mapfish:generate-module|INFO] task generates a Doctrine module:
 The task creates a [%module%|COMMENT] module in the [%application%|COMMENT] application
 for the model class [%model%|COMMENT].
 
-You can also create an empty module that inherits its actions and templates from
-a runtime generated module in [%sf_app_cache_dir%/modules/auto%module%|COMMENT] by
-using the [--generate-in-cache|COMMENT] option:
-
-  [./symfony doctrine:generate-module --generate-in-cache frontend article Article|INFO]
-
-The generator can use a customized theme by using the [--theme|COMMENT] option:
-
-  [./symfony doctrine:generate-module --theme="custom" frontend article Article|INFO]
-
-This way, you can create your very own module generator with your own conventions.
 EOF;
   }
 
@@ -96,12 +77,6 @@ EOF;
     $generatorManager->generate('sfMapFishGenerator', array(
       'model_class'           => $arguments['model'],
       'moduleName'            => $arguments['module'],
-      'theme'                 => $options['theme'],
-      'non_verbose_templates' => $options['non-verbose-templates'],
-      'singular'              => $options['singular'],
-      'plural'                => $options['plural'],
-      'route_prefix'          => $options['route-prefix'],
-      'with_doctrine_route'     => $options['with-doctrine-route'],
     ));
 
     $moduleDir = sfConfig::get('sf_app_module_dir').'/'.$arguments['module'];
@@ -122,6 +97,38 @@ EOF;
 
     // customize test file
     $this->getFilesystem()->replaceTokens(sfConfig::get('sf_test_dir').'/functional/'.$arguments['application'].'/'.$arguments['module'].'ActionsTest.php', '##', '##', $this->constants);
+
+    // update routing file
+    if ($options['generate-route'])
+    {
+      $model = $arguments['model'];
+      $name = strtolower(preg_replace(array('/([A-Z]+)([A-Z][a-z])/', '/([a-z\d])([A-Z])/'), '\\1_\\2', $model));
+      $name = $arguments['module'];
+
+      $routing = sfConfig::get('sf_app_config_dir').'/routing.yml';
+      $content = file_get_contents($routing);
+      $routesArray = sfYaml::load($content);
+
+      if (!isset($routesArray[$name]))
+      {
+        $databaseManager = new sfDatabaseManager($this->configuration);
+        $primaryKey = Doctrine::getTable($model)->getIdentifier();
+        $module = $options['module'] ? $options['module'] : $name;
+        $content = sprintf(<<<EOF
+%s:
+  url:                    /%s
+  class: sfDoctrineRouteCollection
+  options:
+    model:                %s
+    module:               %s
+
+
+EOF
+        , $name, $module, $model, $module).$content;
+
+        file_put_contents($routing, $content);
+      }
+    }
 
     // delete temp files
     $this->getFilesystem()->remove(sfFinder::type('any')->in($tmpDir));

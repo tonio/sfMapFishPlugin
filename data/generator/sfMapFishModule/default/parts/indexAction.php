@@ -7,11 +7,9 @@
 ';?>
   public function executeIndex(sfWebRequest $request)
   {
-    $<?php echo $this->getPluralName() ?> = mfQuery::create()
-      ->select('*')
-      ->from('<?php echo $this->getModelClass() ?>')
-      ->limit(20)
-      ->fetchArray();
-  
-    return $this->renderText(GeoJSON::encode($<?php echo $this->getPluralName() ?>, '<?php echo $this->getModelClass() ?>'));
+    $<?php echo $this->getPluralName() ?> = Doctrine::getTable('<?php echo $this->getModelClass() ?>')->searchByProtocol($request);
+
+    $features = GeoJSON::loadFrom($<?php echo $this->getPluralName() ?>, new GeoJSON_Doctrine_Adapter());
+
+    return $this->renderText(GeoJSON::dump($features));
   }

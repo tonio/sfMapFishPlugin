@@ -27,7 +27,10 @@ class sfMapFishPluginConfiguration extends sfPluginConfiguration
    */
   public function configureDoctrine()
   {
-    $options = array('baseClassName' => 'sfMapFishRecord');
+    $options = array(
+      'baseClassName' => 'sfMapFishRecord' ,
+#      'baseTableName' => 'sfMapFishTable' # as soon as patch for #1976 pass ( http://trac.doctrine-project.org/ticket/1976 ) 
+    );
     sfConfig::set('doctrine_model_builder_options', $options);
   }
 

@@ -10,16 +10,10 @@
  */
 class <?php echo $this->getGeneratedModuleName() ?>Actions extends sfActions
 {
-  
+
 <?php include dirname(__FILE__).'/../../parts/indexAction.php' ?>
 
 <?php include dirname(__FILE__).'/../../parts/showAction.php' ?>
-
-<?php include dirname(__FILE__).'/../../parts/newAction.php' ?>
-
-<?php include dirname(__FILE__).'/../../parts/createAction.php' ?>
-
-<?php include dirname(__FILE__).'/../../parts/editAction.php' ?>
 
 <?php include dirname(__FILE__).'/../../parts/updateAction.php' ?>
 

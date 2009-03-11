@@ -26,7 +26,7 @@ class mfQuery extends Doctrine_Query
    * @var array
    */
   private static $__format = array(
-    'BINARY' => ", encode(asbinary(%s), 'hex') %s"
+    'ASTEXT' => ", ASTEXT(%s) %s"
   );
   
   /**
@@ -36,10 +36,11 @@ class mfQuery extends Doctrine_Query
    *
    * @return mfQuery 
    */
-  public static function create($column='the_geom')
+  public static function create($column='the_geom', $epsg=27572)
   {
     $instance = new self();
     $instance->__geoColumn = $column;
+    $instance->__epsg = $column;
     
     return $instance;
   }
@@ -52,11 +53,13 @@ class mfQuery extends Doctrine_Query
    *
    * @return mfQuery
    */
-  public function select($string, $append='BINARY')
+  public function select($string, $append='ASTEXT')
   {
     if ($append!==false)
+    {
       $string .= sprintf(self::$__format[$append], $this->__geoColumn, $this->__geoColumn);
-
+    }
+    
     return parent::select($string);
   }
 
@@ -108,7 +111,8 @@ class mfQuery extends Doctrine_Query
    */
   public function intersect($geometry, $epsg=null, $tolerance=0, $isWKB=false)
   {
-    $pg_geometry = ($isWKB)?'?':'GEOMETRYFROMTEXT(?, 27572)';
+    $externalESPG = ($epsg===null)?$this->__epsg:$epsg;
+    $pg_geometry = ($isWKB)?'?':"GEOMETRYFROMTEXT(?, $externalESPG)";
     $the_geom = (is_null($epsg))?
       $this->__geoColumn:
       'TRANSFORM('.$this->__geoColumn.', '.(int) $epsg.')';
@@ -116,7 +120,7 @@ class mfQuery extends Doctrine_Query
     $this
       ->addWhere("$the_geom && $pg_geometry", $geometry)
       ->andWhere("DISTANCE($pg_geometry, $the_geom) <= $tolerance", $geometry);
-      
+
     return $this;
   }
 }
