@@ -7,9 +7,7 @@
 ';?>
   public function executeShow(sfWebRequest $request)
   {
-    $this->forward404Unless($<?php echo $this->getSingularName() ?> = Doctrine::getTable('<?php echo $this->getModelClass() ?>')->searchByProtocol($request));
-
-    $feature = GeoJSON::loadFrom($<?php echo $this->getSingularName() ?>, new GeoJSON_Doctrine_Adapter());
+    $feature = GeoJSON::loadFrom($this->getRoute()->getObject(), new GeoJSON_Doctrine_Adapter);
 
     return $this->renderText(GeoJSON::dump($feature));
   }

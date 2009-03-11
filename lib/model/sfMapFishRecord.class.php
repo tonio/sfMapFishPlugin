@@ -20,16 +20,29 @@ class sfMapFishRecord extends sfDoctrineRecord
    * @param string $geometry
    * @param int $epsg
    */
-  public function updateGeometry($geometry, $epsg=null)
+  public function updateGeometry(Geometry $geometry, $epsg=null)
   {
-    $t = Doctrine::getTable($this->_table);
-    
-    list($db_col, $db_epsg) = $t->getGeometryColumn();
-    $epsg = (is_null($epsg))?$db_epsg:$epsg;
-    
-    $t->createQuery('a')
-      ->update($col, 'GEOMETRYFROMTEXT(?, ?)', array($geometry, $epsg))
-      ->execute();
+    try
+    {
+      $t = $this->getTable();
+      
+      list($db_col, $db_epsg) = $t->getGeometryColumn();
+      $epsg = (is_null($epsg))?$db_epsg:$epsg;
+
+      $geometry = WKT::dump($geometry);
+
+      $t->createQuery('a')
+        ->update()
+        ->set($db_col, 'GEOMETRYFROMTEXT(?, ?)', array($geometry, $epsg))
+        ->where($t->getIdentifier().' = ?', $this->getPrimaryKey())
+        ->execute();
+        
+      return true;
+    }
+    catch (Exception $e)
+    {
+      return false;
+    }
   }
   
 }

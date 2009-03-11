@@ -117,7 +117,7 @@ EOF;
         $content = sprintf(<<<EOF
 %s:
   url:                    /%s
-  class: sfDoctrineRouteCollection
+  class: sfMapFishRouteCollection
   options:
     model:                %s
     module:               %s

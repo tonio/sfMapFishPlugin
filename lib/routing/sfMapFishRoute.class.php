@@ -22,4 +22,11 @@
 class sfMapFishRoute extends sfDoctrineRoute
 {
 
+  public function getObjectsForParameters($parameters)
+  {
+    return Doctrine::getTable($this->options['model'])->searchByProtocol(
+      sfContext::getInstance()->getRequest()
+    );
+  }
+
 }

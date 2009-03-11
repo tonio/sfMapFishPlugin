@@ -1,14 +1,23 @@
-  protected function processForm(sfWebRequest $request, sfForm $form)
+<?php echo '
+  /**
+   * Saves '.$this->getModelClass().' and its geometry
+   *
+   * @param sfWebRequest $request
+   * @param sfForm $form
+   *
+   * @return Doctrine_Record
+   */
+';?>
+  protected function processForm(Feature $feature, sfForm $form)
   {
-    $form->bind($request->getParameter($form->getName()));
-    if ($form->isValid())
-    {
-      $<?php echo $this->getSingularName() ?> = $form->save();
+    $c = Doctrine_Manager::getInstance()->getCurrentConnection();
+    $c->beginTransaction();
 
-<?php if (isset($this->params['route_prefix']) && $this->params['route_prefix']): ?>
-      $this->redirect('@<?php echo $this->getUrlForAction('edit') ?>?<?php echo $this->getPrimaryKeyUrlParams() ?>);
-<?php else: ?>
-      $this->redirect('<?php echo $this->getModuleName() ?>/edit?<?php echo $this->getPrimaryKeyUrlParams() ?>);
-<?php endif; ?>
+    if (!$form->bindAndSave($feature->getProperties()) || !$form->getObject()->updateGeometry($feature->getGeometry()))
+    {
+      $c->rollback();
+      return false;
     }
+    
+    return GeoJSON::loadFrom($form->getObject(), new GeoJSON_Doctrine_Adapter);
   }
