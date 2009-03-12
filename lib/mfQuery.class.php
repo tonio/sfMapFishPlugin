@@ -40,8 +40,8 @@ class mfQuery extends Doctrine_Query
   {
     $instance = new self();
     $instance->__geoColumn = $column;
-    $instance->__epsg = $column;
-    
+    $instance->__epsg = $epsg;
+
     return $instance;
   }
   

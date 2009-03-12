@@ -15,6 +15,8 @@ class <?php echo $this->getGeneratedModuleName() ?>Actions extends sfMapFishActi
 
 <?php include dirname(__FILE__).'/../../parts/showAction.php' ?>
 
+<?php include dirname(__FILE__).'/../../parts/countAction.php' ?>
+
 <?php include dirname(__FILE__).'/../../parts/updateAction.php' ?>
 
 <?php include dirname(__FILE__).'/../../parts/deleteAction.php' ?>

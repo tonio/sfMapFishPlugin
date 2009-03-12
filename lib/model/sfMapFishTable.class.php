@@ -8,11 +8,11 @@ class sfMapFishTable extends Doctrine_Table
    *   returns a collection of records, according to MapFish Protocol
    *
    * @param sfWebRequest $request
-   * @param int $hydrationMode        Doctrine::HYDRATE_ARRAY or Doctrine::HYDRATE_RECORD
+   * @param mfQuery $query
    *
    * @return Doctrine_Collection
    */
-  public function searchByProtocol(sfWebRequest $request, Doctrine_Query $query=null)
+  public function searchByProtocol(sfWebRequest $request, mfQuery $query=null)
   {
     if (is_null($query))
     {
@@ -24,16 +24,16 @@ class sfMapFishTable extends Doctrine_Table
       $query->hasPoint(
         $request->getParameter('lon'),
         $request->getParameter('lat'),
-        (int) $request->getParameter('tolerance', 0),
-        $request->getParameter('epsg', null)
+        $request->getParameter('epsg', null),
+        (int) $request->getParameter('tolerance', 0)
       );
     }
     else if ($request->hasParameter('box'))
     {
       $query->inBbox(
         explode(',', $request->hasParameter('box')),
-        (int) $request->getParameter('tolerance', 0),
-        $request->getParameter('epsg', null)
+        $request->getParameter('epsg', null),
+        (int) $request->getParameter('tolerance', 0)
       );
     }
 
@@ -49,7 +49,20 @@ class sfMapFishTable extends Doctrine_Table
 
     return $query;
   }
-  
+
+  /**
+   * countByProtocol
+   *   returns the number of records, according to MapFish Protocol
+   *
+   * @param sfWebRequest $request
+   *
+   * @return integer
+   */
+  public function countByProtocol(sfWebRequest $request)
+  {
+    return $this->searchByProtocol($request, $this->createMfQuery())->count();
+  }
+
   /**
    * createQuery
    * creates a new mfQuery object and adds the component name
@@ -64,7 +77,7 @@ class sfMapFishTable extends Doctrine_Table
     if ( ! empty($alias)) {
       $alias = ' ' . trim($alias);
     }
-    return mfQuery::create($this->getGeometryColumnName())
+    return mfQuery::create($this->getGeometryColumnName(), $this->getGeometryColumnEPSG())
       ->from($this->getComponentName() . $alias);
   }
 
@@ -86,7 +99,7 @@ class sfMapFishTable extends Doctrine_Table
   
   public function getGeometryColumnEPSG()
   {
-    list($name, $epsg) = $this->getGeometryColumnName();
+    list($name, $epsg) = $this->getGeometryColumn();
     return $epsg;
   }
 }
