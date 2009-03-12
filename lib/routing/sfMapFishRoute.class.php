@@ -24,9 +24,19 @@ class sfMapFishRoute extends sfDoctrineRoute
 
   public function getObjectsForParameters($parameters)
   {
-    return Doctrine::getTable($this->options['model'])->searchByProtocol(
-      sfContext::getInstance()->getRequest()
-    );
+    $r = sfContext::getInstance()->getRequest();
+    $features = Doctrine::getTable($this->options['model'])
+      ->searchByProtocol($r)
+      ->execute();
+
+    if ($r->hasParameter('id'))
+    {
+      return $features->getFirst();
+    }
+    else
+    {
+      return $features;
+    }
   }
 
 }

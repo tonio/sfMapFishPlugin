@@ -12,9 +12,12 @@ class sfMapFishTable extends Doctrine_Table
    *
    * @return Doctrine_Collection
    */
-  public function searchByProtocol(sfWebRequest $request)
+  public function searchByProtocol(sfWebRequest $request, Doctrine_Query $query=null)
   {
-    $query = $this->createMfQuery()->select('*');
+    if (is_null($query))
+    {
+      $query = $this->createMfQuery()->select('*');
+    }
 
     if ($request->hasParameter('lon') && $request->hasParameter('lat'))
     {
@@ -44,16 +47,7 @@ class sfMapFishTable extends Doctrine_Table
       $query->limit((int) $request->getParameter('maxfeatures'));
     }
 
-    $result = $query->execute();
-    
-    if ($request->hasParameter('id'))
-    {
-      return $result->getFirst();
-    }
-    else
-    {
-      return $result;
-    }
+    return $query;
   }
   
   /**
