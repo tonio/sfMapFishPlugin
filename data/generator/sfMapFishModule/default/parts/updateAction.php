@@ -11,15 +11,10 @@
 
     if ($feature = $this->processForm(GeoJSON::load($request->getRawBody()), $this->form))
     {
-      $statusCode = 201;
-      $response = GeoJSON::dump($feature);
+      return $this->renderJSON(GeoJSON::dump($feature), 201);
     }
     else
     {
-      $statusCode = 500;
-      $response = 'You die.';
+      return $this->renderJSON('You die.', 500);
     }
-    
-    $this->getResponse()->setStatusCode($statusCode);
-    return $this->renderText($response);
   }

@@ -9,5 +9,5 @@
   {
     $features = GeoJSON::loadFrom($this->getRoute()->getObjects(), new GeoJSON_Doctrine_Adapter);
 
-    return $this->renderText(GeoJSON::dump($features));
+    return $this->renderJSON(GeoJSON::dump($features), 200);
   }
