@@ -76,6 +76,10 @@ class sfMapFishTable extends Doctrine_Table
     if ( ! empty($alias)) {
       $alias = ' ' . trim($alias);
     }
+    if (!$this->getGeometryColumn())
+    {
+      throw new Exception('The class '.$this->getComponentName().' should specify its geometry column.');
+    }
     return mfQuery::create($this->getGeometryColumnName(), $this->getGeometryColumnEPSG())
       ->from($this->getComponentName() . $alias);
   }
@@ -104,6 +108,12 @@ class sfMapFishTable extends Doctrine_Table
   {
     $i = New ReflectionClass($this->_options['name']);
     $statics = $i->getStaticProperties();
+    
+    if (!isset($statics['geometryColumn']))
+    {
+      return false;
+    }
+    
     $geom = $statics['geometryColumn'];
     $col = array_flip($geom);
     
