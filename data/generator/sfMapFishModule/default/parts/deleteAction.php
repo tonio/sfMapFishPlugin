@@ -9,5 +9,5 @@
   {
     $this->getRoute()->getObject()->delete();
 
-    return $this->renderJSON('{"success": true}' ,204);
+    return $this->forward204();
   }

@@ -47,6 +47,16 @@ class sfMapFishTable extends Doctrine_Table
       $query->limit((int) $request->getParameter('maxfeatures'));
     }
 
+    if ($request->hasParameter('limit'))
+    {
+      $query->limit((int) $request->getParameter('limit'));
+    }
+
+    if ($request->hasParameter('offset'))
+    {
+      $query->offset((int) $request->getParameter('offset'));
+    }
+
     return $query;
   }
 
