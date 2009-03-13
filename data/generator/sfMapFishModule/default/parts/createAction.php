@@ -1,13 +1,31 @@
+<?php echo '
+  /**
+   * Creates new '.$this->getModelClass().'(s) from FeatureCollection
+   *
+   * @param sfWebRequest $request
+   */
+';?>
   public function executeCreate(sfWebRequest $request)
   {
-<?php if (isset($this->params['with_doctrine_route']) && $this->params['with_doctrine_route']): ?>
-<?php else: ?>
-    $this->forward404Unless($request->isMethod('post'));
+    $features = GeoJSON::load($request->getRawBody());
 
-<?php endif; ?>
-    $this->form = new <?php echo $this->getModelClass().'Form' ?>();
+    $c = Doctrine_Manager::getInstance()->getCurrentConnection();
+    $c->beginTransaction();
+    
+    $updatedFeatures = new FeatureCollection;
+    foreach ($features as $feature)
+    {
+      $object = Doctrine::getTable('<?php echo $this->getModelClass() ?>')->find($feature->getId());
+      $form = new <?php echo $this->getModelClass().'Form' ?>($object);
+      if (!$feature = $this->processForm($feature, $form))
+      {
+        $c->rollback();
+        return $this->renderJSON('{"success": false}', 500);
+      }
+      $updatedFeatures->addFeature($feature);
+    }
 
-    $this->processForm($request, $this->form);
-
-    $this->setTemplate('new');
+    $c->commit();
+    return $this->renderJSON(GeoJSON::dump($updatedFeatures), 201);
   }
+

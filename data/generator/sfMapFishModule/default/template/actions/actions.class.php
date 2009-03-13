@@ -10,12 +10,13 @@
  */
 class <?php echo $this->getGeneratedModuleName() ?>Actions extends sfMapFishActions
 {
-
 <?php include dirname(__FILE__).'/../../parts/indexAction.php' ?>
 
 <?php include dirname(__FILE__).'/../../parts/showAction.php' ?>
 
 <?php include dirname(__FILE__).'/../../parts/countAction.php' ?>
+
+<?php include dirname(__FILE__).'/../../parts/createAction.php' ?>
 
 <?php include dirname(__FILE__).'/../../parts/updateAction.php' ?>
 

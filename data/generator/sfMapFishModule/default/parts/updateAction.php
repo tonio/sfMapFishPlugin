@@ -7,14 +7,14 @@
 ';?>
   public function executeUpdate(sfWebRequest $request)
   {
-    $this->form = new <?php echo $this->getModelClass().'Form' ?>($this->getRoute()->getObject());
+    $form = new <?php echo $this->getModelClass().'Form' ?>($this->getRoute()->getObject());
 
-    if ($feature = $this->processForm(GeoJSON::load($request->getRawBody()), $this->form))
+    if ($feature = $this->processForm(GeoJSON::load($request->getRawBody()), $form))
     {
       return $this->renderJSON(GeoJSON::dump($feature), 201);
     }
     else
     {
-      return $this->renderJSON('You die.', 500);
+      return $this->renderJSON('{"success": false}', 500);
     }
   }

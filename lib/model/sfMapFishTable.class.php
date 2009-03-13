@@ -64,7 +64,6 @@ class sfMapFishTable extends Doctrine_Table
   }
 
   /**
-   * createQuery
    * creates a new mfQuery object and adds the component name
    * of this table as the query 'from' part
    *
@@ -81,6 +80,26 @@ class sfMapFishTable extends Doctrine_Table
       ->from($this->getComponentName() . $alias);
   }
 
+  /**
+   * Find a object with geometry as text
+   *
+   * @param mixed $id
+   *
+   * @return sfMapFishRecord
+   */
+  public function geoFind($id)
+  {
+    return $this->createMfQuery()
+      ->select('*')
+      ->where($this->getIdentifier().'=?', $id)
+      ->fetchOne();
+  }
+
+  /**
+   * Returns the geometry column name & epsg, as an array
+   *
+   * @return array
+   */
   public function getGeometryColumn()
   {
     $i = New ReflectionClass($this->_options['name']);
@@ -90,13 +109,23 @@ class sfMapFishTable extends Doctrine_Table
     
     return array(array_shift($col), array_shift($geom));
   }
-  
+
+  /**
+   * Returns the geometry column name
+   *
+   * @return string
+   */
   public function getGeometryColumnName()
   {
     list($name, $epsg) = $this->getGeometryColumn();
     return $name;
   }
-  
+
+  /**
+   * Returns the geometry epsg
+   *
+   * @return integer
+   */
   public function getGeometryColumnEPSG()
   {
     list($name, $epsg) = $this->getGeometryColumn();
