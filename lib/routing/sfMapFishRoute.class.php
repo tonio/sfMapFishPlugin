@@ -29,6 +29,24 @@ class sfMapFishRoute extends sfDoctrineRoute
       ->filterByProtocol($r)
       ->execute();
 
+    if (($no_geom=$r->hasParameter('no_geom')) || $r->hasParameter('attrs') )
+    {
+      foreach ($features as $feature)
+      {
+        if ($no_geom)
+        {
+          $feature->set(
+            Doctrine::getTable($this->options['model'])->getGeometryColumnName(),
+            null
+          );
+        }
+        if ($r->hasParameter('attrs'))
+        {
+          $feature->setExportedProperties(explode(',', $r->getParameter('attrs')));
+        }
+      }
+    }
+
     if ($r->hasParameter('id'))
     {
       return $features->getFirst();

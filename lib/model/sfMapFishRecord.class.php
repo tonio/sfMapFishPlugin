@@ -1,7 +1,13 @@
 <?php
 
-class sfMapFishRecord extends sfDoctrineRecord 
+class sfMapFishRecord extends sfDoctrineRecord
 {
+
+  /**
+   * List of properties to export (all by default)
+   *
+   */
+  private $__exportedProperties = null;
 
   /**
    * return current record geometry column
@@ -15,7 +21,7 @@ class sfMapFishRecord extends sfDoctrineRecord
   }
 
   /**
-   * update current record geometry 
+   * update current record geometry
    *
    * @param string $geometry
    * @param int $epsg
@@ -25,7 +31,7 @@ class sfMapFishRecord extends sfDoctrineRecord
     try
     {
       $t = $this->getTable();
-      
+
       list($db_col, $db_epsg) = $t->getGeometryColumn();
       $epsg = (is_null($epsg))?$db_epsg:$epsg;
 
@@ -36,7 +42,7 @@ class sfMapFishRecord extends sfDoctrineRecord
         ->set($db_col, 'GEOMETRYFROMTEXT(?, ?)', array($geometry, $epsg))
         ->where($t->getIdentifier().' = ?', $this->getPrimaryKey())
         ->execute();
-        
+
       return true;
     }
     catch (Exception $e)
@@ -44,5 +50,42 @@ class sfMapFishRecord extends sfDoctrineRecord
       return false;
     }
   }
-  
+
+  /**
+   * Sets properties which will be exported with toArray method
+   *
+   * @param array $fields An array of keys
+   */
+  public function setExportedProperties($fields)
+  {
+    $this->__exportedProperties = $fields;
+  }
+
+  /**
+   * Overrides toArray
+   *
+   * @param boolean $deep
+   * @param string $prefixkey
+   *
+   * @return array The filtered array
+   */
+  public function toArray($deep = true, $prefixKey = false)
+  {
+    $original = parent::toArray($deep, $prefixKey);
+    if (is_null($this->__exportedProperties))
+    {
+      return $original;
+    }
+
+    $filtered = array();
+    foreach ($original as $key => $value)
+    {
+      if (in_array($key, $this->__exportedProperties))
+      {
+        $filtered[$key] = $value;
+      }
+    }
+    return $filtered;
+  }
+
 }

@@ -12,29 +12,29 @@ class mfQuery extends Doctrine_Query
    * @var string
    */
   private $__geoColumn;
-  
+
   /**
    * The projection of the geometric column
    *
    * @var string
    */
   private $__epsg;
-  
+
   /**
    * Format string for geom column transform in select statement
    *
    * @var array
    */
   private static $__format = array(
-    'ASTEXT' => ", ASTEXT(%s) %s"
+    'ASTEXT' => ", ASTEXT(%s) %s, box2d(%s) bbox"
   );
-  
+
   /**
    * Create the query & set the geo column
    *
    * @param string $column
    *
-   * @return mfQuery 
+   * @return mfQuery
    */
   public static function create($column='the_geom', $epsg=27572)
   {
@@ -44,12 +44,12 @@ class mfQuery extends Doctrine_Query
 
     return $instance;
   }
-  
+
   /**
    * sets the SELECT part of the query, and add geo column according to format
    *
    * @param string $string
-   * @param mixed $append false or string : way to transform the geom 
+   * @param mixed $append false or string : way to transform the geom
    *
    * @return mfQuery
    */
@@ -57,9 +57,13 @@ class mfQuery extends Doctrine_Query
   {
     if ($append!==false)
     {
-      $string .= sprintf(self::$__format[$append], $this->__geoColumn, $this->__geoColumn);
+      $string .= sprintf(
+        self::$__format[$append],
+        $this->__geoColumn,
+        $this->__geoColumn,
+        $this->__geoColumn);
     }
-    
+
     return parent::select($string);
   }
 
@@ -70,7 +74,7 @@ class mfQuery extends Doctrine_Query
    * @param float $lat
    * @param int $epsg
    * @param int $tolerance
-   * 
+   *
    * @return mfQuery
    */
   public function hasPoint($lon, $lat, $epsg=null, $tolerance=0)
@@ -98,7 +102,7 @@ class mfQuery extends Doctrine_Query
 
     return $this->intersect("POLYGON(($A, $B, $C, $D, $A))", $epsg, $tolerance);
   }
-  
+
   /**
    * Add where clause with geometry intersects passed geometry
    *
