@@ -26,7 +26,7 @@ class sfMapFishRoute extends sfDoctrineRoute
   {
     $r = sfContext::getInstance()->getRequest();
     $features = Doctrine::getTable($this->options['model'])
-      ->searchByProtocol($r)
+      ->filterByProtocol($r)
       ->execute();
 
     if ($r->hasParameter('id'))

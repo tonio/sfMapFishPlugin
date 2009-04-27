@@ -1,10 +1,21 @@
 <?php
 
-class sfMapFishTable extends Doctrine_Table 
+class sfMapFishTable extends Doctrine_Table
 {
 
+  private $operators = array(
+    'eq' => '=',
+    'ne' => '!=',
+    'lt' => '<',
+    'lte' => '<=',
+    'gt' => '>',
+    'gte' => '>=',
+    'like' => 'LIKE',
+    'ilike' => 'ILIKE'
+  );
+
   /**
-   * searchByProtocol
+   * filterByProtocol
    *   returns a collection of records, according to MapFish Protocol
    *
    * @param sfWebRequest $request
@@ -12,31 +23,20 @@ class sfMapFishTable extends Doctrine_Table
    *
    * @return Doctrine_Collection
    */
-  public function searchByProtocol(sfWebRequest $request, mfQuery $query=null)
+  public function filterByProtocol(sfWebRequest $request, mfQuery $query=null)
   {
     if (is_null($query))
     {
       $query = $this->createMfQuery()->select('*');
     }
 
-    if ($request->hasParameter('lon') && $request->hasParameter('lat'))
-    {
-      $query->hasPoint(
-        $request->getParameter('lon'),
-        $request->getParameter('lat'),
-        $request->getParameter('epsg', null),
-        (int) $request->getParameter('tolerance', 0)
-      );
-    }
-    else if ($request->hasParameter('box'))
-    {
-      $query->inBbox(
-        explode(',', $request->hasParameter('box')),
-        $request->getParameter('epsg', null),
-        (int) $request->getParameter('tolerance', 0)
-      );
-    }
+    # Spatial Filters
+    $this->spatialFilter($request, $query);
 
+    # Attributes filters
+    $this->attributesFilter($request, $query);
+
+    # Limits, offsets filters
     if ($request->hasParameter('id'))
     {
       $query->addWhere($this->getIdentifier().'=?', $request->getParameter('id'));
@@ -61,6 +61,75 @@ class sfMapFishTable extends Doctrine_Table
   }
 
   /**
+   *
+   * @param sfWebRequest $request A Request Object
+   * @param mfQuery $query A MapFish Query
+   *
+   * @return mfQuery The spatial filtered MapFish query
+   */
+  public function spatialFilter(sfWebRequest $request, mfQuery $query)
+  {
+    if ($request->hasParameter('lon') && $request->hasParameter('lat'))
+    {
+      $query->hasPoint(
+        $request->getParameter('lon'),
+        $request->getParameter('lat'),
+        $request->getParameter('epsg', null),
+        (int) $request->getParameter('tolerance', 0)
+      );
+    }
+    else if ($request->hasParameter('box'))
+    {
+      $query->inBbox(
+        explode(',', $request->hasParameter('box')),
+        $request->getParameter('epsg', null),
+        (int) $request->getParameter('tolerance', 0)
+      );
+    }
+
+    return $query;
+  }
+
+  /**
+   *
+   * @param sfWebRequest $request A Request Object
+   * @param mfQuery $query A MapFish Query
+   *
+   * @return mfQuery The spatial filtered MapFish query
+   */
+  public function attributesFilter(sfWebRequest $request, mfQuery $query)
+  {
+    if (!$request->hasParameter('queryable'))
+    {
+      return $query;
+    }
+
+    foreach (explode(',', $request->getParameter('queryable')) as $field)
+    {
+      if (!$this->hasColumn($field))
+      {
+        throw new sfException(sprintf(
+          'Unable to filter : unknown attribute "%s" for model "%s"',
+          $field,
+          $this->name
+        ));
+      }
+      foreach ($request->getGetParameters() as $key => $value)
+      {
+        if (substr($key, 0, strlen($field))===$field && strpos($key, '__')>-1)
+        {
+          $query->andWhere(
+            $field.' '.$this->operators[substr($key, strlen($field)+2)].' ?',
+            $value
+          );
+        }
+      }
+    }
+
+    return $query;
+  }
+
+  /**
    * countByProtocol
    *   returns the number of records, according to MapFish Protocol
    *
@@ -70,7 +139,7 @@ class sfMapFishTable extends Doctrine_Table
    */
   public function countByProtocol(sfWebRequest $request)
   {
-    return $this->searchByProtocol($request, $this->createMfQuery())->count();
+    return $this->filterByProtocol($request, $this->createMfQuery())->count();
   }
 
   /**
@@ -118,15 +187,15 @@ class sfMapFishTable extends Doctrine_Table
   {
     $i = New ReflectionClass($this->_options['name']);
     $statics = $i->getStaticProperties();
-    
+
     if (!isset($statics['geometryColumn']))
     {
       return false;
     }
-    
+
     $geom = $statics['geometryColumn'];
     $col = array_flip($geom);
-    
+
     return array(array_shift($col), array_shift($geom));
   }
 
