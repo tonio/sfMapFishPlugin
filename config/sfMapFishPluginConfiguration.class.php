@@ -51,7 +51,7 @@ class sfMapFishRequest
     }
 
     /**
-     * retrieve raw post data
+     * remove parameter from request parameterHolder
      */
     if ($event['method']==='removeParameter')
     {
