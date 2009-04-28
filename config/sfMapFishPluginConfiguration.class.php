@@ -2,7 +2,7 @@
 
 /**
  * sfMapFishPlugin configuration.
- * 
+ *
  * @package     sfMapFishPlugin
  * @subpackage  config
  * @author      Camptocamp <info@camptocamp.com>
@@ -29,7 +29,7 @@ class sfMapFishPluginConfiguration extends sfPluginConfiguration
   {
     $options = array(
       'baseClassName' => 'sfMapFishRecord' ,
-      'baseTableName' => 'sfMapFishTable' # as soon as patch for #1976 pass ( http://trac.doctrine-project.org/ticket/1976 ) 
+#      'baseTableName' => 'sfMapFishTable' # as soon as patch for #1976 pass ( http://trac.doctrine-project.org/ticket/1976 )
     );
     sfConfig::set('doctrine_model_builder_options', $options);
   }
@@ -38,17 +38,30 @@ class sfMapFishPluginConfiguration extends sfPluginConfiguration
 
 class sfMapFishRequest
 {
-  
+
   static public function listenToMethodNotFound(sfEvent $event)
   {
     /**
      * retrieve raw post data
      */
-    if ($event['method']=='getRawBody')
+    if ($event['method']==='getRawBody')
     {
       $event->setProcessed(true);
       $event->setReturnValue(file_get_contents('php://input'));
     }
+
+    /**
+     * retrieve raw post data
+     */
+    if ($event['method']==='removeParameter')
+    {
+      $ph = $event->getSubject()->getParameterHolder();
+      foreach ($event['arguments'] as $parameter)
+      {
+        $ph->remove($parameter);
+      }
+      $event->setProcessed(true);
+    }
   }
-  
+
 }
