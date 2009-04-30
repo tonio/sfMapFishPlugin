@@ -58,6 +58,26 @@ class sfMapFishRecord extends sfDoctrineRecord
    */
   public function setExportedProperties($fields)
   {
+    foreach ($fields as $key => &$value)
+    {
+      // in case of Doctrine_Record or Doctrine_Collection objects,
+      // setExportedProperties is called recursively for each record.
+      if (is_array($value))
+      {
+        if ($this->$key instanceof Doctrine_Collection)
+        {
+          foreach ($this->$key as $record)
+          {
+            $record->setExportedProperties($value);
+          }
+        }
+        else
+        {
+          $this->$key->setExportedProperties($value);
+        }
+        $value = $key;
+      }
+    }
     $this->__exportedProperties = $fields;
   }
 
