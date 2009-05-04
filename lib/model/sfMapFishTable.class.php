@@ -81,7 +81,7 @@ class sfMapFishTable extends Doctrine_Table
     else if ($request->hasParameter('box'))
     {
       $query->inBbox(
-        explode(',', $request->hasParameter('box')),
+        explode(',', $request->getParameter('box')),
         $request->getParameter('epsg', null),
         (int) $request->getParameter('tolerance', 0)
       );
