@@ -2,12 +2,14 @@
 
 require_once(dirname(__FILE__).'/../bootstrap/unit.php');
 
-$t = new lime_test(16, new lime_output_color());
+$t = new lime_test(18, new lime_output_color());
 
 $t->diag('WKT class');
 
 $point = WKT::load('POINT (10 11)');
 $t->is(get_class($point), 'Point', 'Loads a point into a Point object');
+$t->is($point->getX(), 10, 'Loads a correct X coordinates');
+$t->is($point->getY(), 11, 'Loads a correct Y coordinates');
 
 $multipoint = WKT::load('MULTIPOINT(10 10, 20 20)');
 $t->is(get_class($multipoint), 'MultiPoint', 'Loads a point into a MultiPoint object');

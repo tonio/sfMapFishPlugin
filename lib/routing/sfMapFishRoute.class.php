@@ -24,30 +24,14 @@ class sfMapFishRoute extends sfDoctrineRoute
 
   public function getObjectsForParameters($parameters)
   {
-    $r = sfContext::getInstance()->getRequest();
+    $request = sfContext::getInstance()->getRequest();
     $features = Doctrine::getTable($this->options['model'])
-      ->filterByProtocol($r)
+      ->filterByProtocol($request)
       ->execute();
 
-    if (($no_geom=$r->hasParameter('no_geom')) || $r->hasParameter('attrs') )
-    {
-      foreach ($features as $feature)
-      {
-        if ($no_geom)
-        {
-          $feature->set(
-            Doctrine::getTable($this->options['model'])->getGeometryColumnName(),
-            null
-          );
-        }
-        if ($r->hasParameter('attrs'))
-        {
-          $feature->setExportedProperties(explode(',', $r->getParameter('attrs')));
-        }
-      }
-    }
+    mfProtocol::filter($features, $request);
 
-    if ($r->hasParameter('id'))
+    if ($request->hasParameter('id'))
     {
       return $features->getFirst();
     }

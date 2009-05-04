@@ -4,6 +4,8 @@ require_once(dirname(__FILE__).'/../bootstrap/unit.php');
 
 $t = new lime_test(13, new lime_output_color());
 
+$t->diag('GeoJSON class');
+
 try
 {
 
@@ -26,8 +28,6 @@ catch (Exception $e)
 {
   $t->fail();
 }
-
-$t->diag('GeoJSON class');
 
 $t->is($point->__toString(), $point_string, 'Dumps a point');
 $t->is($line1->__toString(), $line1_string, 'Dumps a line');
