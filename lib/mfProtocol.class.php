@@ -34,7 +34,14 @@ class mfProtocol
         }
         if ($request->hasParameter('attrs'))
         {
-          $feature->setExportedProperties(explode(',', $request->getParameter('attrs')));
+          if (is_array($request->getParameter('attrs')))
+          {
+            $feature->setExportedProperties($request->getParameter('attrs'));
+          }
+          else
+          {
+            $feature->setExportedProperties(explode(',', $request->getParameter('attrs')));
+          }
         }
       }
     }
