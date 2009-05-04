@@ -99,7 +99,7 @@ class sfMapFishTable extends Doctrine_Table
    */
   public function attributesFilter(sfWebRequest $request, mfQuery $query)
   {
-    if (!$request->hasParameter('queryable') || strpos($request->getParameter('queryable'), ',')===false)
+    if (!$request->hasParameter('queryable') || $request->getParameter('queryable')==='')
     {
       return $query;
     }
