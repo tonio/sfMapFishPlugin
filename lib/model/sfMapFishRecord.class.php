@@ -91,7 +91,10 @@ class sfMapFishRecord extends sfDoctrineRecord
    */
   public function toArray($deep = true, $prefixKey = false)
   {
-    $original = parent::toArray($deep, $prefixKey);
+    if (!$original = parent::toArray($deep, $prefixKey))
+    {
+      return false;
+    }
     if (is_null($this->__exportedProperties))
     {
       return $original;
