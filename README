@@ -1,0 +1,67 @@
+sfMapFishPlugin
+===============
+
+The `sfMapFishPlugin` packages useful tools to manage geographical data from a Postgres/PotGis database with symfony & Doctrine.
+
+It's the PHP implementation of the [MapFish framework](http://mapfish.org) available
+
+Installation
+------------
+
+  * Install the plugin
+
+        $ symfony plugin:install sfMapFishPlugin
+
+  * Clear the cache
+
+        $ symfony cache:clear
+
+  * Build (or rebuild the model) 
+
+        $ symfony doctrine:build-model
+
+Documentation
+-------------
+
+All classes have full API and usage documentation. The best way to learn each widget or validator
+is to read the API.
+
+You will also find some informations on the MapFish website:
+
+  * [MapFish Wiki](http://trac.mapfish.org/trac/mapfish/wiki)
+  * [Definition of the MapFish Protocol](http://trac.mapfish.org/trac/mapfish/wiki/Releases/1.2/MapFishProtocol)
+
+Model
+-----
+
+  * sfMapFishRecord: Extends Doctrine_Record with geographical specific stuff (will be automatically changed when models are built).
+  * sfMapFishTable: Extends Doctrine_Record with geographical specific stuff (Due to Doctrine limitation [Ticket #1976](http://trac.doctrine-project.org/ticket/1976), you'll need to make this change from your own in the myModelTable.class.php : replace Doctrine_Table by sfMapFishTable)
+
+Tasks
+-----
+
+  * sfMapFishGenerateModule: Generate a rest controller according to the specifications of the [MapFish protocol](http://trac.mapfish.org/trac/mapfish/wiki/Releases/1.2/MapFishProtocol)
+
+Print Module
+------------
+
+sfMapFishPlugin comes with a built-in controller for [MapFish print protocol](http://trac.mapfish.org/trac/mapfish/wiki/PrintModuleDoc#Protocol).
+
+How to contribute.
+------------------
+
+If you want to contribute, follow these steps:
+
+  * Check the prerequisites
+    * The license must be BSD
+    * You must follow symfony coding standards
+    * The contribution must not be too specific
+    * You must be sure you will be able to maintain your contribution
+  * Create a ticket and attach a patch
+    * Choose `sfMapFishPlugin` as the component
+    * Change the qualification to `Ready for core team`
+
+License
+-------
+
+This plugin is realeased under a BSD license.
