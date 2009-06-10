@@ -1,9 +1,9 @@
 sfMapFishPlugin
 ===============
 
-The `sfMapFishPlugin` packages useful tools to manage geographical data from a Postgres/PotGis database with symfony & Doctrine.
+The `sfMapFishPlugin` packages useful tools to manage geographical data from a Postgres/PostGis database with symfony & Doctrine.
 
-It's the PHP implementation of the [MapFish framework](http://mapfish.org) available
+It's the PHP implementation of the [MapFish framework](http://mapfish.org).
 
 Installation
 ------------
