@@ -20,32 +20,75 @@ Installation
 
         $ symfony doctrine:build-model
 
+Generate a MapFish controller
+-----------------------------
+
+The way to generate a module responding to the restful MapFish Protocol is quite simple:
+
+  * Specify the geometric column and the projection for your Model, in lib/model/doctrine/YourModelClass.php
+
+        [php]
+        public static $geometryColumn = array('the_geom' => 4326);
+
+  * In lib/model/doctrine/YourModelTableClass.php, make the class it extends
+
+        [php]
+        YourModelTable extends sfMapFishTable
+        
+  * You're now ready to generate the controller with a task:
+  
+        $ ./symfony mapfish:generate-module --generate-route frontend your_module YourModel
+
+      The --generate-route will update the routing.yml file and add the corresponding sfMapFishRoute
+
+sfMapFishPlugin gives two classes that extends Doctrine ones to deal with geographical stuff.
+
+  * sfMapFishRecord: Extends Doctrine_Record with geographical specific stuff (will be automatically changed when models are built).
+  * sfMapFishTable: Extends Doctrine_Record with geographical specific stuff (Due to Doctrine limitation [Ticket #1976](http://trac.doctrine-project.org/ticket/1976), you'll need to make this change from your own in the myModelTable.class.php : replace Doctrine_Table by sfMapFishTable)
+
+Install print module
+--------------------
+
+sfMapFishPlugin comes with a built-in controller for [MapFish print protocol](http://trac.mapfish.org/trac/mapfish/wiki/PrintModuleDoc#Protocol). (see [MapFish PrintModuleDoc](https://trac.mapfish.org/trac/mapfish/wiki/PrintModuleDoc))
+
+You'll to have java installed to make this working.
+
+  * Enable this module in your app
+
+        all:
+          .settings:
+            enabled_modules:  [default, mfPrint]
+
+  * Copy the mandatory config file from the plugin to your config directory
+  
+        $ cp plugins/sfMapFishPlugin/data/print/print.yml config/print.yml
+
+  * The print module should be ready & responding to mfPrint/info to get print configuration. 
+    Don't forget to configure the config.yml (see [configuration](https://trac.mapfish.org/trac/mapfish/wiki/PrintModuleServer). For example don't forget to allow your WMS services.
+    The print.yml example given have 3 mandatory fields in the spec: title, comment, & mapTitle. 
+    You can get errors in your symfony log file (if enabled).
+
+  * Troubles: You may have to change the java path to get it working:
+
+        [php]
+        sfConfig::set('mf_jre_path', '/usr/bin/');
+
 Documentation
 -------------
 
-All classes have full API and usage documentation. The best way to learn each widget or validator
-is to read the API.
+All classes have full API documentation.
 
 You will also find some informations on the MapFish website:
 
   * [MapFish Wiki](http://trac.mapfish.org/trac/mapfish/wiki)
   * [Definition of the MapFish Protocol](http://trac.mapfish.org/trac/mapfish/wiki/Releases/1.2/MapFishProtocol)
 
-Model
------
-
-  * sfMapFishRecord: Extends Doctrine_Record with geographical specific stuff (will be automatically changed when models are built).
-  * sfMapFishTable: Extends Doctrine_Record with geographical specific stuff (Due to Doctrine limitation [Ticket #1976](http://trac.doctrine-project.org/ticket/1976), you'll need to make this change from your own in the myModelTable.class.php : replace Doctrine_Table by sfMapFishTable)
 
 Tasks
 -----
 
   * sfMapFishGenerateModule: Generate a rest controller according to the specifications of the [MapFish protocol](http://trac.mapfish.org/trac/mapfish/wiki/Releases/1.2/MapFishProtocol)
 
-Print Module
-------------
-
-sfMapFishPlugin comes with a built-in controller for [MapFish print protocol](http://trac.mapfish.org/trac/mapfish/wiki/PrintModuleDoc#Protocol).
 
 How to contribute.
 ------------------

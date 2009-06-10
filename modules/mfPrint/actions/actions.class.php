@@ -60,6 +60,11 @@ class mfPrintActions extends BaseprintActions
       1 => array("file", $outfile, "w"),
       2 => array("file", $errfile, "w")
     );
+    if (sfConfig::get('sf_logging_enabled'))
+    {     
+      sfContext::getInstance()->getLogger()->debug('{mf_print} Execute : '.$cmd);
+    }
+
     $proc = proc_open($cmd, $descriptorspec, $pipes);
 
     if (!is_resource($proc)) return 255;
@@ -73,7 +78,7 @@ class mfPrintActions extends BaseprintActions
     $stderr = file($errfile);
     if (sfConfig::get('sf_logging_enabled'))
     {     
-      sfContext::getInstance()->getLogger()->debug('{mf_print} '.var_dump($stderr));
+      sfContext::getInstance()->getLogger()->debug('{mf_print} '.implode("",$stderr));
     }
 
     unlink($outfile);
@@ -91,7 +96,7 @@ class mfPrintActions extends BaseprintActions
    */
   public function executeInfo() 
   {
-    $pattern = '%sjava -cp "%s" org.mapfish.print.ShellMapPrinter'.
+    $pattern = '%sjava -Djava.awt.headless=true -cp "%s" org.mapfish.print.ShellMapPrinter'.
       ' --config="%s" --clientConfig --verbose=0';
     $cmd = sprintf($pattern, $this->_java_bin, $this->jarPath, $this->configPath);
 
@@ -115,7 +120,7 @@ class mfPrintActions extends BaseprintActions
   */
   public function executeDoprint() 
   {
-    $pattern = '%sjava -cp "%s" org.mapfish.print.ShellMapPrinter'.
+    $pattern = '%sjava -Djava.awt.headless=true -cp "%s" org.mapfish.print.ShellMapPrinter'.
       ' --config="%s" --clientConfig --verbose=0';
     $cmd = sprintf($pattern, $this->_java_bin, $this->jarPath, $this->configPath);
     $stdout = $stderr = array();
@@ -137,7 +142,7 @@ class mfPrintActions extends BaseprintActions
     $this->_purgeOldFiles();
     $pdf_path = tempnam($this->tmpDir, $this->_temp_file_prefix);
 
-    $pattern = '%sjava -cp "%s" org.mapfish.print.ShellMapPrinter'.
+    $pattern = '%sjava -Djava.awt.headless=true -cp "%s" org.mapfish.print.ShellMapPrinter'.
       ' --config="%s" --verbose=0 --output=%s';
     $cmd = sprintf($pattern, $this->_java_bin, $this->jarPath, $this->configPath, $pdf_path);
 
