@@ -1,9 +1,9 @@
 sfMapFishPlugin
 ===============
 
-The `sfMapFishPlugin` packages useful tools to manage geographical data from a Postgres/PostGis database with symfony & Doctrine.
+The `sfMapFishPlugin` packages useful libraries and tools to publish and interact with your vector GIS data in a PostgreSQL/PostGIS database.
 
-It's the PHP implementation of the [MapFish framework](http://mapfish.org).
+It is a PHP implementation for the [MapFish framework](http://www.mapfish.org), targeted at the popular Symfony framework and Doctrine ORM.
 
 Installation
 ------------
@@ -23,35 +23,45 @@ Installation
 Generate a MapFish controller
 -----------------------------
 
-The way to generate a module responding to the restful MapFish Protocol is quite simple:
+It's quite simple to generate a module which exposes your geographic data through a RESTful API, via the [MapFish Protocol](http://trac.mapfish.org/trac/mapfish/wiki/MapFishProtocol). 
 
-  * Specify the geometric column and the projection for your Model, in lib/model/doctrine/YourModelClass.php
+Say you want to be able to CREATE/READ/UPDATE/DELETE geographic features in a table with a geographic column. 
+Just follow these three easy steps:
+
+  * In lib/model/doctrine/YourModelClass.php, specify your table's geometric column name and its [EPSG code](http://spatialreference.org), by adding such a line:
 
         [php]
         public static $geometryColumn = array('the_geom' => 4326);
+        
+      Here, we have a table with a geometric column whose name is 'the_geom', and its projection code is [EPSG:4326](http://spatialreference.org/ref/epsg/4326/)
 
-  * In lib/model/doctrine/YourModelTableClass.php, make the class it extends
+  * Make YourModelTable extend sfMapFishTable instead of Doctrine_Table: in lib/model/doctrine/YourModelTableClass.php, you should have:
 
         [php]
         YourModelTable extends sfMapFishTable
         
-  * You're now ready to generate the controller with a task:
+  * You're now ready to generate a MapFish module tied to this Model, by the way of the mapfish:generate-module built-in task:
   
         $ ./symfony mapfish:generate-module --generate-route frontend your_module YourModel
 
-      The --generate-route will update the routing.yml file and add the corresponding sfMapFishRoute
+      The --generate-route will update the routing.yml file for the frontend application, by adding the corresponding sfMapFishRoute.
+      In this example, the resulting module will be named "your_module". You may want to customize this !
+      
+Once this is done, clear your cache, and check you've got some GeoJSON data out of /index.php/your_module
 
-sfMapFishPlugin gives two classes that extends Doctrine ones to deal with geographical stuff.
+This being done, you may want to have a look at MapFish client side software, which plays well with this REST API.
+Just check out http://www.mapfish.org/svn/mapfish/trunk/MapFish/client/mfbase/ into your project's web/js directory, and [read the doc](http://dev.mapfish.org/sandbox/website/.build/html/index.html) or [browse the examples](http://demo.mapfish.org/mapfishsample/trunk/) ;-)
 
-  * sfMapFishRecord: Extends Doctrine_Record with geographical specific stuff (will be automatically changed when models are built).
-  * sfMapFishTable: Extends Doctrine_Record with geographical specific stuff (Due to Doctrine limitation [Ticket #1976](http://trac.doctrine-project.org/ticket/1976), you'll need to make this change from your own in the myModelTable.class.php : replace Doctrine_Table by sfMapFishTable)
+For quick CRUD operations on your data, you can take advantage of the existing mapfish.widgets.editing.FeatureEditingPanel widget, which is being showcased [here](http://demo.mapfish.org/mapfishsample/trunk/examples/editing/).
+
+In case of problems, feel free to drop us a line on the dedicated [MapFish mailing list, or IRC](http://trac.mapfish.org/trac/mapfish/wiki/Community)
 
 Install print module
 --------------------
 
-sfMapFishPlugin comes with a built-in controller for [MapFish print protocol](http://trac.mapfish.org/trac/mapfish/wiki/PrintModuleDoc#Protocol). (see [MapFish PrintModuleDoc](https://trac.mapfish.org/trac/mapfish/wiki/PrintModuleDoc))
+sfMapFishPlugin comes with a built-in controller for the [MapFish print protocol](http://trac.mapfish.org/trac/mapfish/wiki/PrintModuleDoc#Protocol), which you can optionally activate if you want your app to produce nice PDF with your maps. (see [MapFish PrintModuleDoc](https://trac.mapfish.org/trac/mapfish/wiki/PrintModuleDoc))
 
-You'll to have java installed to make this working.
+You'll need to have [Sun's JRE](http://www.java.com/download/) installed to make this working.
 
   * Enable this module in your app
 
@@ -64,11 +74,11 @@ You'll to have java installed to make this working.
         $ cp plugins/sfMapFishPlugin/data/print/print.yml config/print.yml
 
   * The print module should be ready & responding to mfPrint/info to get print configuration. 
-    Don't forget to configure the config.yml (see [configuration](https://trac.mapfish.org/trac/mapfish/wiki/PrintModuleServer). For example don't forget to allow your WMS services.
-    The print.yml example given have 3 mandatory fields in the spec: title, comment, & mapTitle. 
-    You can get errors in your symfony log file (if enabled).
+    Don't forget to configure the config.yml (see [configuration](https://trac.mapfish.org/trac/mapfish/wiki/PrintModuleServer). For instance, you should at least allow the print service to access the WMS services you're using.
+    The provided print.yml example fiel has 3 mandatory fields in the spec: title, comment & mapTitle. 
+    If you're getting errors, check your symfony log file to get debug information (if enabled in your application environment).
 
-  * Troubles: You may have to change the java path to get it working:
+  * Troubleshooting: You may need to manually set the java path to get it working:
 
         [php]
         sfConfig::set('mf_jre_path', '/usr/bin/');
@@ -78,7 +88,7 @@ Documentation
 
 All classes have full API documentation.
 
-You will also find some informations on the MapFish website:
+You will also find some information on the MapFish website:
 
   * [MapFish Wiki](http://trac.mapfish.org/trac/mapfish/wiki)
   * [Definition of the MapFish Protocol](http://trac.mapfish.org/trac/mapfish/wiki/Releases/1.2/MapFishProtocol)
@@ -87,7 +97,7 @@ You will also find some informations on the MapFish website:
 Tasks
 -----
 
-  * sfMapFishGenerateModule: Generate a rest controller according to the specifications of the [MapFish protocol](http://trac.mapfish.org/trac/mapfish/wiki/Releases/1.2/MapFishProtocol)
+  * sfMapFishGenerateModule: Generates a REST controller, according to the specifications from the [MapFish protocol](http://trac.mapfish.org/trac/mapfish/wiki/Releases/1.2/MapFishProtocol)
 
 
 How to contribute.
