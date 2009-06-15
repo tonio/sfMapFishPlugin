@@ -73,10 +73,12 @@ You'll need to have [Sun's JRE](http://www.java.com/download/) installed to make
   
         $ cp plugins/sfMapFishPlugin/data/print/print.yml config/print.yml
 
-  * The print module should be ready & responding to mfPrint/info to get print configuration. 
+  * The print module should be ready & responding to /index.php/mfPrint/info to get print configuration. 
     Don't forget to configure the config.yml (see [configuration](https://trac.mapfish.org/trac/mapfish/wiki/PrintModuleServer). For instance, you should at least allow the print service to access the WMS services you're using.
     The provided print.yml example fiel has 3 mandatory fields in the spec: title, comment & mapTitle. 
     If you're getting errors, check your symfony log file to get debug information (if enabled in your application environment).
+    
+  * Once this is done, you can integrate the [MapFish print widgets](http://www.mapfish.org/svn/mapfish/trunk/MapFish/client/mfbase/mapfish/widgets/print/) into your client application, which give you the ability to output nice customizable PDF with your maps. Examples can be found [here](http://demo.mapfish.org/mapfishsample/trunk/examples/print/).
 
   * Troubleshooting: You may need to manually set the java path to get it working:
 
