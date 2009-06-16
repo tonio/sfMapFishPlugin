@@ -108,7 +108,7 @@ How to contribute.
 If you want to contribute, follow these steps:
 
   * Check the prerequisites
-    * The license must be BSD
+    * The license must be MIT
     * You must follow symfony coding standards
     * The contribution must not be too specific
     * You must be sure you will be able to maintain your contribution
@@ -119,4 +119,4 @@ If you want to contribute, follow these steps:
 License
 -------
 
-This plugin is realeased under a BSD license.
+This plugin is realeased under a MIT license.
