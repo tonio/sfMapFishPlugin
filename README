@@ -40,6 +40,11 @@ Just follow these three easy steps:
         [php]
         YourModelTable extends sfMapFishTable
         
+  * Unset the geometric column from the configure method of the form in lib/form/doctrine/YourModelForm.class.php:
+
+        [php]
+        unset($this['the_geom']);
+        
   * You're now ready to generate a MapFish module tied to this Model, by the way of the mapfish:generate-module built-in task:
   
         $ ./symfony mapfish:generate-module --generate-route frontend your_module YourModel
