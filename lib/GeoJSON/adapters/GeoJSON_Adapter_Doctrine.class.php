@@ -73,7 +73,7 @@ class GeoJSON_Doctrine_Adapter implements GeoJSON_Adapter
 
     $matches = array();
     preg_match_all('/(\d+)(?:\.\d+)?/', $object->bbox, $matches);
-    return $matches[0];
+    return array_map("floatval", $matches[0]);
   }
 
   /**

@@ -71,7 +71,7 @@ class WKT
     {
       case self::POINT:
         $coords = $this->pregExplode('spaces', $str);
-        return new Point($coords[0], $coords[1]);
+        return new Point(floatval($coords[0]), floatval($coords[1]));
 
       case self::MULTIPOINT:
         foreach (explode(',', trim($str)) as $point)
@@ -91,7 +91,7 @@ class WKT
         $lines = $this->pregExplode('parenComma', $str);
         foreach ($lines as $l)
         {
-          $line = preg_replace($this->regExes['trimParens'], '$1', $l);
+		  $line = substr( $l, stripos( $l, '(' ) +1, strripos( $l, ')')-1);
           $components[] = $this->parse(self::LINESTRING, $line);
         }
         return new MultiLineString($components);
@@ -100,7 +100,7 @@ class WKT
         $rings= $this->pregExplode('parenComma', $str);
         foreach ($rings as $r)
         {
-          $ring = preg_replace($this->regExes['trimParens'], '$1', $r);
+		  $ring = substr( $r, stripos( $r, '(' ) +1, strripos( $r, ')')-1);
           $linestring = $this->parse(self::LINESTRING, $ring);
           $components[] = new LinearRing($linestring->getComponents());
         }
@@ -110,7 +110,7 @@ class WKT
         $polygons = $this->pregExplode('doubleParenComma', $str);
         foreach ($polygons as $p)
         {
-          $polygon = preg_replace($this->regExes['trimParens'], '$1', $p);
+		  $polygon = substr( $l, stripos( $p, '(' ) +1, strripos( $p, ')')-1);
           $components[] = $this->parse(self::POLYGON, $polygon);
         }
         return new MultiPolygon($components);
