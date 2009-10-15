@@ -19,6 +19,10 @@ Installation
   * Build (or rebuild the model) 
 
         $ symfony doctrine:build-model
+        
+    At this step, your geometry column should be set as a blob in your schema.
+    
+        the_geom: { type: blob }
 
 Generate a MapFish controller
 -----------------------------
