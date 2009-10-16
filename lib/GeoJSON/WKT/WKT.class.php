@@ -91,7 +91,7 @@ class WKT
         $lines = $this->pregExplode('parenComma', $str);
         foreach ($lines as $l)
         {
-		  $line = substr( $l, stripos( $l, '(' ) +1, strripos( $l, ')')-1);
+		  $line = $this->trimParens( $l );
           $components[] = $this->parse(self::LINESTRING, $line);
         }
         return new MultiLineString($components);
@@ -100,7 +100,7 @@ class WKT
         $rings= $this->pregExplode('parenComma', $str);
         foreach ($rings as $r)
         {
-		  $ring = substr( $r, stripos( $r, '(' ) +1, strripos( $r, ')')-1);
+		  $ring = $this->trimParens( $r );
           $linestring = $this->parse(self::LINESTRING, $ring);
           $components[] = new LinearRing($linestring->getComponents());
         }
@@ -110,7 +110,7 @@ class WKT
         $polygons = $this->pregExplode('doubleParenComma', $str);
         foreach ($polygons as $p)
         {
-		  $polygon = substr( $l, stripos( $p, '(' ) +1, strripos( $p, ')')-1);
+		  $polygon = $this->trimParens( $p );
           $components[] = $this->parse(self::POLYGON, $polygon);
         }
         return new MultiPolygon($components);
@@ -128,6 +128,20 @@ class WKT
         return null;
     }
   }
+
+  /**
+   * Trim the parenthesis 
+   *
+   */
+  protected function trimParens($str)
+  {
+   $open_parent = stripos( $str, '(' );
+   $open_parent = ($open_parent!==false)?$open_parent+1:0;
+   $close_parent = strripos( $str, ')' );
+   $close_parent = ($close_parent!==false)?$close_parent:strlen($str);
+   return substr( $str, $open_parent, $close_parent);
+  }
+
 
   /**
    * Split string according to first match of passed regEx index of $regExes
