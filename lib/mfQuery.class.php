@@ -79,10 +79,10 @@ class mfQuery extends Doctrine_Query
    */
   public function toPolygon($left, $bottom, $right, $top)
   {
-    $A = (string)$left.' '.(string)$bottom;
-    $B = (string)$right.' '.(string)$bottom;
-    $C = (string)$right.' '.(string)$top;
-    $D = (string)$left.' '.(string)$top;
+    $A = $left.' '.$bottom;
+    $B = $right.' '.$bottom;
+    $C = $right.' '.$top;
+    $D = $left.' '.$top;
     return "POLYGON(($A, $B, $C, $D, $A))";
   }
   
@@ -97,6 +97,7 @@ class mfQuery extends Doctrine_Query
    */
   public function box($box, $epsg=null, $tolerance=0)
   { 
+    $box = array_map('floatval', $box);
     $geometry = $bbox = $this->toPolygon($box[0], $box[1], $box[2], $box[3]);
     if ($tolerance > 0)
     {

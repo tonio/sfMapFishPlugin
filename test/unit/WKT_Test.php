@@ -68,7 +68,7 @@ $t->is(WKT::dump($geometrycollection), 'GEOMETRYCOLLECTION(POINT(10 10),POINT(30
 class Invalid extends Geometry { public function getCoordinates(){return 1 ;}};
 
 $null = new invalid();
-$t->is(WKT::dump($null), null, 'Unknown geometry are duymped to null');
+$t->is(WKT::dump($null), null, 'Unknown geometry are dumped to null');
 
 
 
