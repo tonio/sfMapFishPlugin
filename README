@@ -59,7 +59,7 @@ Just follow these three easy steps:
 Once this is done, clear your cache, and check you've got some GeoJSON data out of /index.php/your_module
 
 This being done, you may want to have a look at MapFish client side software, which plays well with this REST API.
-Just check out http://www.mapfish.org/svn/mapfish/trunk/MapFish/client/mfbase/ into your project's web/js directory, and [read the doc](http://dev.mapfish.org/sandbox/website/.build/html/index.html) or [browse the examples](http://demo.mapfish.org/mapfishsample/trunk/) ;-)
+Just check out http://www.mapfish.org/svn/mapfish/framework/client/trunk/mfbase/ into your project's web/js directory, and [read the doc](http://www.mapfish.org/doc/index.html) or [browse the examples](http://demo.mapfish.org/mapfishsample/trunk/) ;-)
 
 For quick CRUD operations on your data, you can take advantage of the existing mapfish.widgets.editing.FeatureEditingPanel widget, which is being showcased [here](http://demo.mapfish.org/mapfishsample/trunk/examples/editing/).
 
@@ -87,7 +87,7 @@ You'll need to have [Sun's JRE](http://www.java.com/download/) installed to make
     The provided print.yml example fiel has 3 mandatory fields in the spec: title, comment & mapTitle. 
     If you're getting errors, check your symfony log file to get debug information (if enabled in your application environment).
     
-  * Once this is done, you can integrate the [MapFish print widgets](http://www.mapfish.org/svn/mapfish/trunk/MapFish/client/mfbase/mapfish/widgets/print/) into your client application, which give you the ability to output nice customizable PDF with your maps. Examples can be found [here](http://demo.mapfish.org/mapfishsample/trunk/examples/print/).
+  * Once this is done, you can integrate the [MapFish print widgets](http://www.mapfish.org/svn/mapfish/framework/client/trunk/mfbase/mapfish/widgets/print/) into your client application, which give you the ability to output nice customizable PDF with your maps. Examples can be found [here](http://demo.mapfish.org/mapfishsample/trunk/examples/print/).
 
   * Troubleshooting: You may need to manually set the java path to get it working:
 
@@ -99,16 +99,16 @@ Documentation
 
 All classes have full API documentation.
 
-You will also find some information on the MapFish website:
+You will also find some information on the [MapFish website](http://www.mapfish.org/):
 
-  * [MapFish Wiki](http://trac.mapfish.org/trac/mapfish/wiki)
-  * [Definition of the MapFish Protocol](http://trac.mapfish.org/trac/mapfish/wiki/Releases/1.2/MapFishProtocol)
+  * [MapFish Wiki](http://trac.mapfish.org/trac/mapfish)
+  * [Definition of the MapFish Protocol](http://trac.mapfish.org/trac/mapfish/wiki/MapFishProtocol)
 
 
 Tasks
 -----
 
-  * sfMapFishGenerateModule: Generates a REST controller, according to the specifications from the [MapFish protocol](http://trac.mapfish.org/trac/mapfish/wiki/Releases/1.2/MapFishProtocol)
+  * sfMapFishGenerateModule: Generates a REST controller, according to the specifications from the [MapFish protocol](http://trac.mapfish.org/trac/mapfish/wiki/MapFishProtocol)
 
 
 How to contribute.
