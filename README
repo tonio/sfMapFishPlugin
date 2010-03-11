@@ -10,15 +10,16 @@ Installation
 
   * Install the plugin
 
-        $ symfony plugin:install sfMapFishPlugin
+        $ ./symfony plugin:install sfMapFishPlugin
 
   * Clear the cache
 
-        $ symfony cache:clear
+        $ ./symfony cache:clear
 
-  * Build (or rebuild the model) 
+  * Build (or rebuild) the model and the forms 
 
-        $ symfony doctrine:build-model
+        $ ./symfony doctrine:build-model
+        $ ./symfony doctrine:build-forms
         
     At this step, your geometry column should be set as a blob in your schema.
     
@@ -44,10 +45,11 @@ Just follow these three easy steps:
         [php]
         YourModelTable extends sfMapFishTable
         
-  * Unset the geometric column from the configure method of the form in lib/form/doctrine/YourModelForm.class.php:
+  * Unset the geometric column from the configure method of the form in lib/form/doctrine/YourModelForm.class.php, and don't forget to disable the CSRF protection on it:
 
         [php]
         unset($this['the_geom']);
+        $this->disableCSRFProtection();
         
   * You're now ready to generate a MapFish module tied to this Model, by the way of the mapfish:generate-module built-in task:
   

@@ -57,14 +57,6 @@ class sfMapFishRequest
 
   static public function listenToMethodNotFound(sfEvent $event)
   {
-    /**
-     * retrieve raw post data
-     */
-    if ($event['method']==='getRawBody')
-    {
-      $event->setProcessed(true);
-      $event->setReturnValue(file_get_contents('php://input'));
-    }
 
     /**
      * remove parameter from request parameterHolder

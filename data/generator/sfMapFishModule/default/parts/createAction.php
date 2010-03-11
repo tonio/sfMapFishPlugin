@@ -7,7 +7,7 @@
 ';?>
   public function executeCreate(sfWebRequest $request)
   {
-    $features = GeoJSON::load($request->getRawBody());
+    $features = GeoJSON::load($request->getContent());
 
     $c = Doctrine_Manager::getInstance()->getCurrentConnection();
     $c->beginTransaction();

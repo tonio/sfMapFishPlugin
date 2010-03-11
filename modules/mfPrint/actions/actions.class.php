@@ -124,7 +124,7 @@ class mfPrintActions extends BaseprintActions
       ' --config="%s" --clientConfig --verbose=0';
     $cmd = sprintf($pattern, $this->_java_bin, $this->jarPath, $this->configPath);
     $stdout = $stderr = array();
-    $return = $this->mycmd_exec($cmd, $request->getRawBody(), $stdout, $stderr);
+    $return = $this->mycmd_exec($cmd, $request->getContent(), $stdout, $stderr);
 
     $this->forward404unless($return == 0);
 
@@ -148,7 +148,7 @@ class mfPrintActions extends BaseprintActions
 
     $stdout = $stderr =array();
     
-    $return = $this->mycmd_exec($cmd, $request->getRawBody(), $stdout, $stderr);
+    $return = $this->mycmd_exec($cmd, $request->getContent(), $stdout, $stderr);
 
     $this->forward404unless($return == 0);
     

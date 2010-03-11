@@ -9,7 +9,7 @@
   {
     $form = new <?php echo $this->getModelClass().'Form' ?>($this->getRoute()->getObject());
 
-    if ($feature = $this->processForm(GeoJSON::load($request->getRawBody()), $form))
+    if ($feature = $this->processForm(GeoJSON::load($request->getContent()), $form))
     {
       return $this->renderJSON(GeoJSON::dump($feature), 201);
     }
