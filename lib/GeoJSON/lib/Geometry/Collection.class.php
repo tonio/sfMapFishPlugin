@@ -15,7 +15,7 @@
  * @author     Camptocamp <info@camptocamp.com>
  * @version
  */
-abstract class Collection extends Geometry implements Iterator
+abstract class Collection extends Geometry implements Iterator, ArrayAccess
 {
   protected $components = array();
 
@@ -62,7 +62,7 @@ abstract class Collection extends Geometry implements Iterator
     return $this->components;
   }
 
-  # Iterator Interface functions
+  // Iterator Interface functions
 
   public function rewind()
   {
@@ -89,6 +89,27 @@ abstract class Collection extends Geometry implements Iterator
     return $this->current() !== false;
   }
 
+  // ArrayAccess Interface functions
+
+  public function offsetExists($offset)
+  {
+      return isset($this->components[$offset]);
+  }
+
+  public function offsetGet($offset)
+  {
+      return $this->components[$offset];
+  }
+
+  public function offsetSet($offset, $value)
+  {
+      $this->components[$offset] = $value;
+  }
+
+  public function offsetUnset($offset)
+  {
+      unset($this->components[$offset]);
+  }
 
 }
 

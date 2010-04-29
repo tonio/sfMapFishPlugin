@@ -37,8 +37,6 @@ class Feature
    */
   private $bbox = null;
 
-
-
   /**
    * Constructor
    *
@@ -190,5 +188,26 @@ class Feature
 
     return $r;
   }
+
+  /**
+   * Shortcut to dump feature as GeoJSON
+   *
+   * @return string The GeoJSON representation of the feature
+   */
+  public function __toString()
+  {
+    return $this->toGeoJSON();
+  }
+
+  /**
+   * Dumps Feature as GeoJSON
+   *
+   * @return string The GeoJSON representation of the feature
+   */
+  public function toGeoJSON()
+  {
+    return json_encode($this->getGeoInterface());
+  }
+
 }
 
