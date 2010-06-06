@@ -53,7 +53,7 @@ class mfQuery extends Doctrine_Query
    *
    * @return mfQuery
    */
-  public function select($string, $append='ASTEXT')
+  public function select($string = null, $append='ASTEXT')
   {
     if ($append!==false)
     {
