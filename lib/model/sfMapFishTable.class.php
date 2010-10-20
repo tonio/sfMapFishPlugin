@@ -84,11 +84,19 @@ class sfMapFishTable extends Doctrine_Table
   {
     $tolerance = (float)$request->getParameter('tolerance', 0);
     $epsg = $request->getParameter('epsg', null);
-    
+
     if ($request->hasParameter('box'))
     {
       $query->box(
         explode(',', $request->getParameter('box')),
+        $epsg,
+        $tolerance
+      );
+    }
+    elseif ($request->hasParameter('bbox'))
+    {
+      $query->box(
+        explode(',', $request->getParameter('bbox')),
         $epsg,
         $tolerance
       );
