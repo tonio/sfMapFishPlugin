@@ -128,25 +128,21 @@ class sfMapFishRecord extends sfDoctrineRecord
   /**
    * Gets center of geometry
    *
-   * @param string $uid The record primary key
-   *
    * @return string $c The geometry center
    */
-  public function getCenter($uid = null)
+  public function getGeometryCenter()
   {
-    $uid = is_null($uid) ? 'gid' : $uid;
-
     try
     {
+      $uid = array_keys($this->identifier());
       $t = $this->getTable();
-
       $c = $t->createQuery('q')
         ->select('CENTER(the_geom)')
-        ->where($uid . ' = ?', $this->$uid)
+        ->where($uid[0] . ' = ?', $this->oid)
         ->fetchOne(array(), Doctrine_Core::HYDRATE_NONE)
-        ;
-      return $c;
+      ;
 
+      return $c;
     }
     catch (Exception $e)
     {
