@@ -130,17 +130,17 @@ class sfMapFishRecord extends sfDoctrineRecord
    *
    * @return string $c The geometry center
    */
-  public function getGeometryCenter()
+  public function getGeometryCenter($uid = null)
   {
+    $uid = is_null($uid) ? 'gid' : $uid;
     try
     {
-      $uid = array_keys($this->identifier());
       $t = $this->getTable();
       $c = $t->createQuery('q')
         ->select('CENTER(the_geom)')
-        ->where($uid[0] . ' = ?', $this->oid)
+        ->where($uid . ' = ?', $this->$uid)
         ->fetchOne(array(), Doctrine_Core::HYDRATE_NONE)
-      ;
+        ;
 
       return $c;
     }
