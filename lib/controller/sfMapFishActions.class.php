@@ -25,13 +25,13 @@ class sfMapFishActions extends sfActions
    *
    * @return sfView::NONE
    */
-  public function renderJSON($JSON, $statusCode=200)
+  public function renderJSON($JSON, $statusCode = 200)
   {
     $r = $this->getResponse();
     $r->clearHttpHeaders();
     $r->setStatusCode($statusCode);
     $r->setContentType('application/json');
-    
+
     return $this->renderText($JSON);
   }
 
@@ -45,7 +45,7 @@ class sfMapFishActions extends sfActions
     $r = $this->getResponse();
     $r->clearHttpHeaders();
     $r->setStatusCode(204);
-    
+
     return sfView::NONE;
   }
 

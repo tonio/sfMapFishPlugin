@@ -17,136 +17,134 @@
 class sfMapFishRecord extends sfDoctrineRecord
 {
 
-  /**
-   * List of properties to export (all by default)
-   *
-   */
-  private $__exportedProperties = null;
+    /**
+     * List of properties to export (all by default)
+     *
+     */
+    private $__exportedProperties = null;
 
-  /**
-   * return current record geometry column
-   *
-   * @return string
-   *
-   */
-  public function getGeometryColumn()
-  {
-    $t = Doctrine::getTable($this->_table)->getGeometryColumn();
-  }
-
-  /**
-   * update current record geometry
-   *
-   * @param string $geometry
-   * @param int $epsg
-   */
-  public function updateGeometry(Geometry $geometry, $epsg=null)
-  {
-    try
+    /**
+     * return current record geometry column
+     *
+     * @return string
+     *
+     */
+    public function getGeometryColumn()
     {
-      $t = $this->getTable();
-
-      list($db_col, $db_epsg) = $t->getGeometryColumn();
-      $epsg = (is_null($epsg))?$db_epsg:$epsg;
-
-      $geometry = WKT::dump($geometry);
-
-      $t->createQuery('a')
-        ->update()
-        ->set($db_col, 'GEOMETRYFROMTEXT(?, ?)', array($geometry, $epsg))
-        ->where($t->getIdentifier().' = ?', $this->getPrimaryKey())
-        ->execute();
-
-      return true;
+        $t = Doctrine_Core::getTable($this->_table)->getGeometryColumn();
     }
-    catch (Exception $e)
-    {
-      return false;
-    }
-  }
 
-  /**
-   * Sets properties which will be exported with toArray method
-   *
-   * @param array $fields An array of keys
-   */
-  public function setExportedProperties($fields)
-  {
-    foreach ($fields as $key => &$value)
+    /**
+     * update current record geometry
+     *
+     * @param string $geometry
+     * @param int $epsg
+     */
+    public function updateGeometry(Geometry $geometry, $epsg=null)
     {
-      // in case of Doctrine_Record or Doctrine_Collection objects,
-      // setExportedProperties is called recursively for each record.
-      if (is_array($value))
-      {
-        if ($this->$key instanceof Doctrine_Collection)
+        try
         {
-          foreach ($this->$key as $record)
-          {
-            $record->setExportedProperties($value);
-          }
+            $t = $this->getTable();
+
+            list($db_col, $db_epsg) = $t->getGeometryColumn();
+            $epsg = (is_null($epsg))?$db_epsg:$epsg;
+
+            $geometry = WKT::dump($geometry);
+
+            $t->createQuery('a')
+                ->update()
+                ->set($db_col, 'GEOMETRYFROMTEXT(?, ?)', array($geometry, $epsg))
+                ->where($t->getIdentifier().' = ?', $this->getPrimaryKey())
+                ->execute();
+
+            return true;
         }
-        else
+        catch (Exception $e)
         {
-          $this->$key->setExportedProperties($value);
+            return false;
         }
-        $value = $key;
-      }
-    }
-    $this->__exportedProperties = $fields;
-  }
-
-  /**
-   * Overrides toArray
-   *
-   * @param boolean $deep
-   * @param string $prefixkey
-   *
-   * @return array The filtered array
-   */
-  public function toArray($deep = true, $prefixKey = false)
-  {
-    if (!$original = parent::toArray($deep, $prefixKey))
-    {
-      return false;
-    }
-    if (is_null($this->__exportedProperties))
-    {
-      return $original;
     }
 
-    $filtered = array();
-    foreach ($original as $key => $value)
+    /**
+     * Sets properties which will be exported with toArray method
+     *
+     * @param array $fields An array of keys
+     */
+    public function setExportedProperties($fields)
     {
-      if (in_array($key, $this->__exportedProperties))
-      {
-        $filtered[$key] = $value;
-      }
+        foreach ($fields as $key => &$value)
+        {
+            // in case of Doctrine_Record or Doctrine_Collection objects,
+            // setExportedProperties is called recursively for each record.
+            if (is_array($value))
+            {
+                if ($this->$key instanceof Doctrine_Collection)
+                {
+                    foreach ($this->$key as $record)
+                    {
+                        $record->setExportedProperties($value);
+                    }
+                }
+                else
+                {
+                    $this->$key->setExportedProperties($value);
+                }
+                $value = $key;
+            }
+        }
+        $this->__exportedProperties = $fields;
     }
-    return $filtered;
-  }
 
-  /**
-   * Gets center of geometry
-   *
-   * @return string $c The geometry center
-   */
-  public function getGeometryCenter($uid = null)
-  {
-    $uid = is_null($uid) ? 'gid' : $uid;
-    try
+    /**
+     * Overrides toArray
+     *
+     * @param boolean $deep
+     * @param string $prefixkey
+     *
+     * @return array The filtered array
+     */
+    public function toArray($deep = true, $prefixKey = false)
     {
-      $t = $this->getTable();
-      $c = $t->createQuery('q')
-        ->select('CENTER(the_geom)')
-        ->where($uid . ' = ?', $this->$uid)
-        ->fetchOne(array(), Doctrine_Core::HYDRATE_NONE)
-        ;
+        if (!$original = parent::toArray($deep, $prefixKey))
+        {
+            return false;
+        }
+        if (is_null($this->__exportedProperties))
+        {
+            return $original;
+        }
 
-      return $c;
+        $filtered = array();
+        foreach ($original as $key => $value)
+        {
+            if (in_array($key, $this->__exportedProperties))
+            {
+                $filtered[$key] = $value;
+            }
+        }
+        return $filtered;
     }
-    catch (Exception $e)
+
+    /**
+     * Gets center of geometry
+     *
+     * @return string $c The geometry center
+     */
+    public function getGeometryCenter($uid = null)
     {
-      return false;
+        $uid = is_null($uid) ? 'gid' : $uid;
+        try {
+            $t = $this->getTable();
+            $c = $t->createQuery('q')
+                ->select('CENTER(the_geom)')
+                ->where($uid . ' = ?', $this->$uid)
+                ->fetchOne(array(), Doctrine_Core::HYDRATE_NONE)
+                ;
+
+            return $c;
+        } catch (Exception $e) {
+
+            return false;
+        }
     }
-  }
 }

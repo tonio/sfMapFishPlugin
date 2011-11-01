@@ -15,6 +15,6 @@
  */
 class sfMapFishRouteCollection extends sfObjectRouteCollection
 {
-  protected
-    $routeClass = 'sfMapFishRoute';
+    protected
+        $routeClass = 'sfMapFishRoute';
 }
