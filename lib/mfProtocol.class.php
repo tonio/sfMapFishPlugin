@@ -10,42 +10,39 @@
  */
 class mfProtocol
 {
-
-  /**
-   *
-   *
-   * @param Doctrine_Collection $features
-   * @param sfWebRequest $request
-   *
-   * @return Doctrine_Collection
-   */
-  static public function filter(Doctrine_Collection $features, sfWebRequest $request)
-  {
-    if (($no_geom=$request->hasParameter('no_geom')) || $request->hasParameter('attrs') )
+    /**
+     * @param Doctrine_Collection $features
+     * @param sfWebRequest $request
+     *
+     * @return Doctrine_Collection
+     */
+    static public function filter(Doctrine_Collection $features, sfWebRequest $request)
     {
-      foreach ($features as $feature)
-      {
-        if ($no_geom)
+        if (($no_geom=$request->hasParameter('no_geom')) || $request->hasParameter('attrs') )
         {
-          $feature->set(
-            $feature->getTable()->getGeometryColumnName(),
-            null
-          );
+            foreach ($features as $feature)
+            {
+                if ($no_geom)
+                {
+                    $feature->set(
+                        $feature->getTable()->getGeometryColumnName(),
+                        null
+                    );
+                }
+                if ($request->hasParameter('attrs'))
+                {
+                    if (is_array($request->getParameter('attrs')))
+                    {
+                        $feature->setExportedProperties($request->getParameter('attrs'));
+                    }
+                    else
+                    {
+                        $feature->setExportedProperties(explode(',', $request->getParameter('attrs')));
+                    }
+                }
+            }
         }
-        if ($request->hasParameter('attrs'))
-        {
-          if (is_array($request->getParameter('attrs')))
-          {
-            $feature->setExportedProperties($request->getParameter('attrs'));
-          }
-          else
-          {
-            $feature->setExportedProperties(explode(',', $request->getParameter('attrs')));
-          }
-        }
-      }
+        return $features;
     }
-    return $features;
-  }
 
 }

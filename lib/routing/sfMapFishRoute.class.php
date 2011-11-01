@@ -18,23 +18,23 @@
 class sfMapFishRoute extends sfDoctrineRoute
 {
 
-  public function getObjectsForParameters($parameters)
-  {
-    $request = sfContext::getInstance()->getRequest();
-    $features = Doctrine::getTable($this->options['model'])
-      ->filterByProtocol($request)
-      ->execute();
-
-    mfProtocol::filter($features, $request);
-
-    if ($request->hasParameter('id'))
+    public function getObjectsForParameters($parameters)
     {
-      return $features->getFirst();
+        $request = sfContext::getInstance()->getRequest();
+        $features = Doctrine::getTable($this->options['model'])
+            ->filterByProtocol($request)
+            ->execute();
+
+        mfProtocol::filter($features, $request);
+
+        if ($request->hasParameter('id'))
+        {
+            return $features->getFirst();
+        }
+        else
+        {
+            return $features;
+        }
     }
-    else
-    {
-      return $features;
-    }
-  }
 
 }
